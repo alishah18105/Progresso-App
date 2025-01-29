@@ -41,6 +41,7 @@ dependencies:
   firebase_auth: ^5.4.1
   cloud_firestore: ^5.6.2
   google_fonts: ^6.2.1
+  persistent_bottom_nav_bar: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -90,5 +91,15 @@ flutter:
     - family: Pacifico
       fonts:
         - asset: assets/fonts/Pacifico-Regular.ttf
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald-Bold.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto_Condensed-Bold.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

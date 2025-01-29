@@ -174,4 +174,12 @@ class HomeScreenViewModel extends BaseViewModel {
       },
     );
   }
+
+  //Bottom Navigation Bar:
+  int selectedIndex = 0;
+  void onItemTapped(int index) {
+      selectedIndex = index;
+      notifyListeners();
+    
+  }
 }

@@ -21,8 +21,24 @@ class HomeScreenView extends StatelessWidget {
               viewModel.isAdd = true;
               viewModel.customAlertDialog(context);
             },
+            shape: const CircleBorder(),
+            backgroundColor:const Color(0xFF40E0D0),
             child: const Icon(Icons.add),
           ),
+            appBar: AppBar(
+            leading: Builder(
+              builder: (context) {
+                return IconButton(onPressed: (){
+                  Scaffold.of(context).openDrawer();
+                }, icon: const Icon(Icons.menu, size: 25, color:Color(0xFF40E0D0) ));
+              }
+            ),
+            title:const Center(
+              child: Text("Progresso", style: TextStyle(fontFamily: "Pacifico", fontSize: 30, color: Color(0xFFE91E63) ),)
+                ), 
+            backgroundColor: const Color(0xFF1C1F26)
+            ),
+            
           body:Container(
   height: double.infinity,
   width: double.infinity,
@@ -37,96 +53,159 @@ class HomeScreenView extends StatelessWidget {
       end: Alignment.bottomRight,
     ),
   ),
-  child: StreamBuilder<DocumentSnapshot>(
-    stream: FirebaseFirestore.instance
-        .collection("users")
-        .doc(FirebaseAuth.instance.currentUser?.uid)
-        .snapshots(),
-    builder: (context, snapshot) {
-      if (snapshot.hasData && snapshot.data != null) {
-        var userData = snapshot.data!.data() as Map<String, dynamic>?;
-
-        // Handle null or missing 'tasks' field
-        List<dynamic> tasks = userData?["tasks"] ?? [];
-
-        if (tasks.isEmpty) {
-          return const Center(
-            child: Text(
-              "No tasks available. Add some!",
-              style: TextStyle(color: Colors.white),
+  child: SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+                  const Padding(
+                  padding:  EdgeInsets.only(top:16.0, left: 8),
+                  child: Text(
+                    "Welcome, Ali Sultan", // Display the username
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 35,
+                      fontFamily: "BebasNeue",
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2.0,
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding:  EdgeInsets.only(left:8.0),
+                  child: Text("Have a great day", style: 
+                  TextStyle(
+                        color: Colors.white60,
+                        fontFamily: "Montserrat",
+                        fontSize: 15,
+                  ),
+                  ),
+                ),
+           const SizedBox(height: 10,),
+           const Divider(
+            thickness: 7,
+           ),
+           const SizedBox(height: 20,),
+          const  Padding(
+             padding: EdgeInsets.only(left: 8.0),
+             child: Text("Your Tasks", style: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold, fontFamily: "Oswald"),),
+           ),
+           const SizedBox(height: 10,),
+          Expanded(
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(FirebaseAuth.instance.currentUser?.uid)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  var userData = snapshot.data!.data() as Map<String, dynamic>?;
+            
+                  // Handle null or missing 'tasks' field
+                  List<dynamic> tasks = userData?["tasks"] ?? [];
+            
+                  if (tasks.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "No tasks available. Add some!",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }
+            
+                  return ListView.builder(
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> task = tasks[index] as Map<String, dynamic>;
+            
+                      return Card(
+                        color: index % 2 == 0
+                      ? const Color(0xFF2F353D) // Soft dark gray
+                      : const  Color(0xFF5E5A78),
+                        child: ListTile(
+                          leading: Text("${index +1}", style: const TextStyle(color: Color(0xFF40E0D0), fontSize: 15),),
+                          title: Text(
+                            "${task["title"]}",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          subtitle: Text(
+                            "${task["description"]}",
+                            style: const TextStyle(color: Colors.white70),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  viewModel.isAdd = false;
+                                  viewModel.title.text = task["title"];
+                                  viewModel.description.text = task["description"];
+                                  viewModel.currentTask = task;
+                                  viewModel.customAlertDialog(context);
+                                },
+                                icon:  const Icon(Icons.edit, color:Color(0xFFFFA500),size: 25,),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  await viewModel.removeTask(task);
+                                },
+                                icon: const Icon(Icons.delete, color:  Color(0xFFB22222),size: 25,),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+            
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
+                }
+            
+                return const Center(
+                  child: Text(
+                    "Error loading tasks. Please try again.",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              },
             ),
-          );
-        }
-
-        return ListView.builder(
-          itemCount: tasks.length,
-          itemBuilder: (context, index) {
-            Map<String, dynamic> task = tasks[index] as Map<String, dynamic>;
-
-            return Card(
-              color: index % 2 == 0
-            ? const Color(0xFF2F353D) // Soft dark gray
-            : const Color(0xFF4A90E2),
-              child: ListTile(
-              
-                title: Text(
-                  "${task["title"]}",
-                  style: const TextStyle(color: Colors.white),
-                ),
-                subtitle: Text(
-                  "${task["description"]}",
-                  style: const TextStyle(color: Colors.white70),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Color(0xFFFFA500),
-                      child: IconButton(
-                        onPressed: () {
-                          viewModel.isAdd = false;
-                          viewModel.title.text = task["title"];
-                          viewModel.description.text = task["description"];
-                          viewModel.currentTask = task;
-                          viewModel.customAlertDialog(context);
-                        },
-                        icon: const Icon(Icons.edit, color: Colors.black),
-                      ),
-                    ),
-                    SizedBox(width: 10,),
-                    CircleAvatar(
-                      backgroundColor: Colors.redAccent[700],
-                      child: IconButton(
-                        onPressed: () async {
-                          await viewModel.removeTask(task);
-                        },
-                        icon: Icon(Icons.delete, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      }
-
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(
-          child: CircularProgressIndicator(color: Colors.white),
-        );
-      }
-
-      return const Center(
-        child: Text(
-          "Error loading tasks. Please try again.",
-          style: TextStyle(color: Colors.white),
-        ),
-      );
-    },
+          ),
+        ],
+      ),
+    ),
   ),
-),
-        );
+),        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: Theme(
+            data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent, // Removes the splash effect
+            highlightColor: Colors.transparent, // Removes the ripple highlight
+            ),
+            child: BottomNavigationBar(
+                    items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.check_circle_outline),
+              label: 'To-do',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.description),
+              label: 'Notes',
+            ),
+            
+                    ],
+                    backgroundColor: const Color(0xFF1C1F26),
+                    currentIndex: viewModel.selectedIndex,
+                    selectedItemColor:const Color(0xFF4A90E2),
+                    unselectedItemColor: const Color(0xFF757C89),
+                    onTap: viewModel.onItemTapped,
+                  ),
+          ),
+    );
+
       },
     );
   }
