@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:todoist/Screens/Home%20Screen/homeScreen_viewModlel.dart';
 
@@ -123,36 +125,76 @@ class HomeScreenView extends StatelessWidget {
                         color: index % 2 == 0
                       ? const Color(0xFF2F353D) // Soft dark gray
                       : const  Color(0xFF5E5A78),
-                        child: ListTile(
-                          leading: Text("${index +1}", style: const TextStyle(color: Color(0xFF40E0D0), fontSize: 15),),
-                          title: Text(
-                            "${task["title"]}",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          subtitle: Text(
-                            "${task["description"]}",
-                            style: const TextStyle(color: Colors.white70),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  viewModel.isAdd = false;
-                                  viewModel.title.text = task["title"];
-                                  viewModel.description.text = task["description"];
-                                  viewModel.currentTask = task;
-                                  viewModel.customAlertDialog(context);
-                                },
-                                icon:  const Icon(Icons.edit, color:Color(0xFFFFA500),size: 25,),
-                              ),
-                              IconButton(
-                                onPressed: () async {
-                                  await viewModel.removeTask(task);
-                                },
-                                icon: const Icon(Icons.delete, color:  Color(0xFFB22222),size: 25,),
-                              ),
-                            ],
+                        child: Slidable(
+                           endActionPane: ActionPane(motion: const ScrollMotion(), 
+                    children: [
+                   
+                    SlidableAction(onPressed: (context){
+                      viewModel.isAdd = false;
+                      viewModel.title.text = task["title"];
+                      viewModel.description.text = task["description"];
+                      viewModel.currentTask = task;
+                      viewModel.customAlertDialog(context);
+                    },
+                    backgroundColor: const Color(0xFF40E0D0), // Cyan for Edit
+                    foregroundColor: const Color(0xFF1C1F26), // Dark base for the icon
+                    icon: FontAwesomeIcons.penToSquare,
+                    label: 'Edit',
+                    ),
+
+                     SlidableAction(onPressed: (context) async {
+                      await viewModel.removeTask(task);
+                     },
+                    backgroundColor: const Color(0xFFB22222), // Crimson for Delete
+                    foregroundColor: Colors.white, // White for the icon and text
+                    icon: FontAwesomeIcons.trashCan,
+                    label: 'Delete',
+                    ),
+                    ]),
+                          child: ListTile(
+                            key: ValueKey(task["id"] ?? task["title"]),
+                            leading: Text("${index +1}", style: const TextStyle(color: Color(0xFF40E0D0), fontSize: 15),),
+                            title: Text(
+                              "${task["title"]}",
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            subtitle: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "${task["description"]}",
+                                  style: const TextStyle(color: Colors.white70),
+                                ),
+                                
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Status: ",
+                                      style: const TextStyle(color: const Color(0xFFB22222)),
+                                    ),
+                                    Text(
+                                      "${task["isChecked"]}",
+                                      style: const TextStyle(color: Colors.white70),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            trailing: IconButton(
+                            onPressed: () async {
+                              await viewModel.toggleTaskCheckbox(task, context);
+                            },
+                            icon: task["isChecked"] == "Completed"
+                              ? const FaIcon(
+                                  FontAwesomeIcons.circleCheck,
+                                  color: Color(0xFF4A90E2),
+                                )
+                              : const FaIcon(
+                                  FontAwesomeIcons.circle,
+                                  color: Color(0xFF4A90E2),
+                                ),
+                          )
+ 
                           ),
                         ),
                       );

@@ -48,6 +48,7 @@ class HomeScreenViewModel extends BaseViewModel {
       Map<String, String> newTask = {
         "title": title.text.trim(),
         "description": description.text.trim(),
+        "isChecked" : "Pending"
       };
 
       await userDocument.update({
@@ -84,6 +85,7 @@ class HomeScreenViewModel extends BaseViewModel {
       Map<String, String> updatedTask = {
         "title": title.text.trim(),
         "description": description.text.trim(),
+        "isChecked" : "Pending",
       };
 
       await userDocument.update({
@@ -182,4 +184,49 @@ class HomeScreenViewModel extends BaseViewModel {
       notifyListeners();
     
   }
+
+  // Update checkbox value for a specific task
+Future<void> toggleTaskCheckbox(Map<String, dynamic> task, BuildContext context) async {
+  try {
+    // Toggle the isChecked value (no change in task order)
+    Map<String, dynamic> updatedTask = {
+      ...task,
+      "isChecked": task["isChecked"] == "Completed" ? "Pending" : "Completed",
+    };
+
+    // Update the task in the local list
+    int taskIndex = tasks.indexOf(task);
+    if (taskIndex != -1) {
+      tasks[taskIndex] = updatedTask;  // Only update the task's state (isChecked)
+    }
+
+    // Notify listeners to trigger a UI update
+    notifyListeners();
+
+    // Update the task in Firestore
+    final userDocument = await userDoc;
+
+    // Instead of removing and adding the task, we directly update it
+    await userDocument.update({
+      "tasks": FieldValue.arrayRemove([task]),  // Remove the old task
+    });
+
+    await userDocument.update({
+      "tasks": FieldValue.arrayUnion([updatedTask]),  // Add the updated task
+    });
+
+    // Show a snackbar when the task is completed (checked)
+    if (updatedTask["isChecked"] == "Completed") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Task Completed Successfully!")),
+      );
+    }
+  } catch (error) {
+    print("Error toggling checkbox: $error");
+  }
+}
+
+
+
+
 }
