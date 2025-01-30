@@ -226,6 +226,12 @@ Future<void> toggleTaskCheckbox(Map<String, dynamic> task, BuildContext context)
   }
 }
 
+//Log Out Function: 
+fireBase_logOut()async{
+await FirebaseAuth.instance.signOut();
+
+}
+
 
 
 

@@ -32,14 +32,14 @@ class SplashScreenView extends StatelessWidget {
                 children: [
                   
                   Positioned(
-                    top: MediaQuery.of(context).size.height * 0.35, 
+                    top: MediaQuery.of(context).size.height * 0.3, 
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Lottie.asset("assets/images/SplashScreen.json"),
-                      width: 200,
-                      height: 200,
+                      width: 250,
+                      height: 300,
                     ),
                   ),
 

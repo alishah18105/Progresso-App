@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:todoist/Screens/Home%20Screen/homeScreen_viewModlel.dart';
+import 'package:todoist/Screens/Login%20Screen/loginScreen_view.dart';
 
 class HomeScreenView extends StatelessWidget {
   const HomeScreenView({super.key});
@@ -37,40 +38,53 @@ class HomeScreenView extends StatelessWidget {
             ),
             title:const Center(
               child: Text("Progresso", style: TextStyle(fontFamily: "Pacifico", fontSize: 30, color: Color(0xFFE91E63) ),)
-                ), 
+                ),
+                actions: [
+                  IconButton(
+                        icon: const Icon(
+                          Icons.logout,
+                          size: 25,
+                          color: Color(0xFF40E0D0), 
+                        ),
+                        onPressed: () {
+                          viewModel.fireBase_logOut();
+                  Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> LoginScreenView()), (route) => false);
+                        }
+                  )
+                ], 
             backgroundColor: const Color(0xFF1C1F26)
             ),
             
           body:Container(
-  height: double.infinity,
-  width: double.infinity,
-  decoration: const BoxDecoration(
-    gradient: LinearGradient(
-      colors: [
-        Color(0xFF1C1F26), // Dark gray
-        Color(0xFF1A202E), // Dark blue-gray
-        Color(0xFF232A3A), // Slightly purple-toned dark
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    ),
-  ),
-  child: SafeArea(
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+            height: double.infinity,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF1C1F26), // Dark gray
+                  Color(0xFF1A202E), // Dark blue-gray
+                  Color(0xFF232A3A), // Slightly purple-toned dark
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   const Padding(
                   padding:  EdgeInsets.only(top:16.0, left: 8),
                   child: Text(
                     "Welcome, Ali Sultan", // Display the username
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 35,
-                      fontFamily: "BebasNeue",
+                      fontSize: 30,
+                      fontFamily: "Roboto",
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 2.0,
+                      //letterSpacing: 2.0,
                     ),
                   ),
                 ),
@@ -78,7 +92,7 @@ class HomeScreenView extends StatelessWidget {
                   padding:  EdgeInsets.only(left:8.0),
                   child: Text("Have a great day", style: 
                   TextStyle(
-                        color: Colors.white60,
+                        color: Color(0xFF4A90E2),
                         fontFamily: "Montserrat",
                         fontSize: 15,
                   ),
@@ -91,7 +105,7 @@ class HomeScreenView extends StatelessWidget {
            const SizedBox(height: 20,),
           const  Padding(
              padding: EdgeInsets.only(left: 8.0),
-             child: Text("Your Tasks", style: TextStyle(fontSize: 25, color: Colors.white, fontWeight: FontWeight.bold, fontFamily: "Oswald"),),
+             child: Text("Your Tasks", style: TextStyle(fontSize: 25, color: Colors.white,  fontFamily: "Poppins"),),
            ),
            const SizedBox(height: 10,),
           Expanded(
@@ -141,7 +155,7 @@ class HomeScreenView extends StatelessWidget {
                     icon: FontAwesomeIcons.penToSquare,
                     label: 'Edit',
                     ),
-
+          
                      SlidableAction(onPressed: (context) async {
                       await viewModel.removeTask(task);
                      },
@@ -163,18 +177,21 @@ class HomeScreenView extends StatelessWidget {
                               children: [
                                 Text(
                                   "${task["description"]}",
-                                  style: const TextStyle(color: Colors.white70),
+                                  style: const TextStyle(color: Colors.white60),
                                 ),
                                 
                                 Row(
                                   children: [
                                     Text(
                                       "Status: ",
-                                      style: const TextStyle(color: const Color(0xFFB22222)),
+                                      style: const TextStyle(color: const Color(0xFFB22222,),
+                                      fontSize: 12
+                                      ),
                                     ),
                                     Text(
                                       "${task["isChecked"]}",
-                                      style: const TextStyle(color: Colors.white70),
+                                      style: const TextStyle(color: Colors.white70, fontSize: 12)
+                                      ,
                                     ),
                                   ],
                                 ),
@@ -194,7 +211,7 @@ class HomeScreenView extends StatelessWidget {
                                   color: Color(0xFF4A90E2),
                                 ),
                           )
- 
+           
                           ),
                         ),
                       );
@@ -217,11 +234,11 @@ class HomeScreenView extends StatelessWidget {
               },
             ),
           ),
-        ],
-      ),
-    ),
-  ),
-),        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+                  ],
+                ),
+              ),
+            ),
+          ),        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: Theme(
             data: Theme.of(context).copyWith(
             splashColor: Colors.transparent, // Removes the splash effect
