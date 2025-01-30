@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
+import 'package:todoist/Utilis/app_colors.dart';
 
 class HomeScreenViewModel extends BaseViewModel {
   TextEditingController title = TextEditingController();
@@ -232,6 +233,15 @@ await FirebaseAuth.instance.signOut();
 
 }
 
+//Theme Changer
+bool darkTheme = true;
+ThemeBase themeColor = DarkTheme();
+
+void themeChanger() {
+  darkTheme = !darkTheme;
+  themeColor = darkTheme ? DarkTheme() : LightTheme();
+  notifyListeners();
+}
 
 
 
