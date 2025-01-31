@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
+import 'package:todoist/Screens/Home%20Screen/homeScreen_viewModlel.dart';
 import 'package:todoist/Screens/Login%20Screen/loginScreen_viewModel.dart';
 import 'package:todoist/Screens/Sign%20Up%20Screen/signUpScreen_view.dart';
 
@@ -15,12 +16,12 @@ class LoginScreenView extends StatelessWidget {
         return Scaffold(
           body: Container(
             height: double.infinity,
-            decoration: const BoxDecoration(
+            decoration:  BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFF1C1F26), // Dark gray
-                  Color(0xFF1A202E), // Dark blue-gray
-                  Color(0xFF232A3A), // Slightly purple-toned dark
+                  themeColor.gradient1, // Dark gray
+                  themeColor.gradient2, // Dark blue-gray
+                  themeColor.gradient3, // Slightly purple-toned dark
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -35,26 +36,26 @@ class LoginScreenView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                         Text(
                           "Welcome",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: themeColor.text1,
                             fontSize: 40,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        const Text(
+                         Text(
                           "Back",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: themeColor.text1,
                             fontSize: 40,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        const Text(
+                         Text(
                           "We're glad to see you again!",
                           style: TextStyle(
-                            color: Colors.lightBlue,
+                            color: themeColor.text2,
                             
                           ),
                         ),
@@ -62,44 +63,48 @@ class LoginScreenView extends StatelessWidget {
                         const SizedBox(height: 50),
                     
                         TextField(
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: themeColor.startText3 ),
                           controller: viewModel.mail,
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: Color(0xFF2F353D) ,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
+                            fillColor: themeColor.tileColor1 ,
+                            enabledBorder: OutlineInputBorder(
+                             borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: themeColor.tileColor1), // Default border color
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(color: themeColor.tileColor2)
                             ),
-                            prefixIcon: const Icon(
+                            prefixIcon:  Icon(
                               Icons.email_outlined,
-                              color: Colors.white,
+                              color: themeColor.text1,
                             ),
-                            labelStyle: TextStyle(color: Colors.white),
+                            labelStyle: TextStyle(color: themeColor.text1),
                             hintText: "Email",
-                            hintStyle: const TextStyle(color: Colors.white),
+                            hintStyle:  TextStyle(color: themeColor.text1),
                           ),
                         ),
                     
                         const SizedBox(height: 10),
                         TextField(
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: themeColor.startText3),
                           controller: viewModel.pass,
                           obscureText: viewModel.obscureText,
                           decoration: InputDecoration(
                             filled: true,
-                            fillColor: const  Color(0xFF5E5A78),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
+                            fillColor: themeColor.tileColor2,
+                           enabledBorder: OutlineInputBorder(
+                             borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: themeColor.tileColor2), // Default border color
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
+                              borderSide: BorderSide(color: themeColor.tileColor1)
                             ),
-                            prefixIcon: const Icon(
+                            prefixIcon:  Icon(
                               Icons.key,
-                              color: Colors.white,
+                              color: themeColor.text1,
                             ),
                             suffixIcon: IconButton(
                               onPressed: () {
@@ -109,12 +114,12 @@ class LoginScreenView extends StatelessWidget {
                                 viewModel.obscureText
                                     ? Icons.visibility_off
                                     : Icons.visibility,
-                                color: const Color(0xFF40E0D0),
+                                color: themeColor.text1,
                               ),
                             ),
                             
                             hintText: "Password",
-                            hintStyle: const TextStyle(color: Colors.white),
+                            hintStyle: TextStyle(color: themeColor.text1),
                           ),
                         ),
                         const SizedBox(height: 25),
@@ -130,18 +135,18 @@ class LoginScreenView extends StatelessWidget {
                                     viewModel.checkBoxValue(value);
                                   },
                                 ),
-                                const Text(
+                                 Text(
                               "Remember Me",
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: themeColor.text1),
                             ),
                               ],
                             ),
                             
                             TextButton(
                               onPressed: () {},
-                              child: const Text(
+                              child:  Text(
                                 "Forgot Password?",
-                                style: TextStyle(color: Colors.blue),
+                                style: TextStyle(color: themeColor.elevatedButtonColor),
                               ),
                             ),
                           ],
@@ -159,19 +164,19 @@ class LoginScreenView extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 60, vertical: 11),
-                              backgroundColor: Color(0xFFFFA500),
+                              backgroundColor: themeColor.elevatedButtonColor,
                             ),
                           ),
                         ),
                         const SizedBox(height: 20),
-                        const Center(
+                         Center(
                           child: Text(
                             "Or Sign In With",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: themeColor.text1),
                           ),
                         ),
                         const SizedBox(height: 30),
-                        const Row(
+                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             CircleAvatar(
@@ -179,7 +184,7 @@ class LoginScreenView extends StatelessWidget {
                               child: FaIcon(
                                 FontAwesomeIcons.github,
                                 size: 30,
-                                color: Colors.white,
+                                color:themeColor.text1,
                               ),
                             ),
                             CircleAvatar(
@@ -187,7 +192,7 @@ class LoginScreenView extends StatelessWidget {
                               child: FaIcon(
                                 FontAwesomeIcons.google,
                                 size: 30,
-                                color: Colors.white,
+                                color: themeColor.text1,
                               ),
                             ),
                             CircleAvatar(
@@ -195,7 +200,7 @@ class LoginScreenView extends StatelessWidget {
                               child: FaIcon(
                                 FontAwesomeIcons.linkedin,
                                 size: 30,
-                                color: Colors.white,
+                                color:themeColor.text1,
                               ),
                             ),
                           ],
@@ -204,9 +209,9 @@ class LoginScreenView extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                             Text(
                               "Don't have an account?",
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color:themeColor.text1,),
                             ),
                             TextButton(
                               onPressed: () {
@@ -216,9 +221,9 @@ class LoginScreenView extends StatelessWidget {
                                         builder: (context) =>
                                             const SignUpScreenView()));
                               },
-                              child: const Text(
+                              child:  Text(
                                 "Sign Up",
-                                style: TextStyle(color:  Color(0xFFFFA500) ),
+                                style: TextStyle(color: themeColor.elevatedButtonColor ),
                               ),
                             )
                           ],

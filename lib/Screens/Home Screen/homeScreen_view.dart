@@ -25,15 +25,15 @@ class HomeScreenView extends StatelessWidget {
               viewModel.customAlertDialog(context);
             },
             shape: const CircleBorder(),
-            backgroundColor:viewModel.themeColor.iconColor,
-            child:  Icon(Icons.add, color: viewModel.themeColor.iconButtonColor,),
+            backgroundColor:themeColor.iconColor,
+            child:  Icon(Icons.add, color: themeColor.iconButtonColor,),
           ),
             appBar: AppBar(
             leading: Builder(
               builder: (context) {
                 return IconButton(onPressed: (){
                   Scaffold.of(context).openDrawer();
-                }, icon:  Icon(Icons.menu, size: 25, color: viewModel.themeColor.iconColor ));
+                }, icon:  Icon(Icons.menu, size: 25, color: themeColor.iconColor ));
               }
             ),
             title:const Center(
@@ -42,14 +42,14 @@ class HomeScreenView extends StatelessWidget {
                 actions: [
                   IconButton(onPressed: (){
                     viewModel.themeChanger();
-                  }, icon: viewModel.darkTheme ? FaIcon(FontAwesomeIcons.moon, color: viewModel.themeColor.iconColor, size: 25,)
-                  : FaIcon(FontAwesomeIcons.sun, color: viewModel.themeColor.iconColor, size: 25,)
+                  }, icon: darkTheme ? FaIcon(FontAwesomeIcons.moon, color: themeColor.iconColor, size: 25,)
+                  : FaIcon(FontAwesomeIcons.sun, color: themeColor.iconColor, size: 25,)
                   ),
                   IconButton(
                         icon: Icon(
                           Icons.logout,
                           size: 25,
-                          color: viewModel.themeColor.iconColor, 
+                          color: themeColor.iconColor, 
                         ),
                         onPressed: () {
                           viewModel.fireBase_logOut();
@@ -57,7 +57,7 @@ class HomeScreenView extends StatelessWidget {
                         }
                   )
                 ], 
-            backgroundColor: viewModel.themeColor.gradient1
+            backgroundColor: themeColor.gradient1
             ),
             
           body:Container(
@@ -66,9 +66,9 @@ class HomeScreenView extends StatelessWidget {
             decoration:  BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  viewModel.themeColor.gradient1, // Dark gray
-                  viewModel.themeColor.gradient2, // Dark blue-gray
-                  viewModel.themeColor.gradient3, // Slightly purple-toned dark
+                  themeColor.gradient1, // Dark gray
+                  themeColor.gradient2, // Dark blue-gray
+                  themeColor.gradient3, // Slightly purple-toned dark
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -85,7 +85,7 @@ class HomeScreenView extends StatelessWidget {
                   child: Text(
                     "Welcome, Ali Sultan", // Display the username
                     style:  TextStyle(
-                      color: viewModel.themeColor.text1,
+                      color: themeColor.text1,
                       fontSize: 30,
                       fontFamily: "Roboto",
                       fontWeight: FontWeight.bold,
@@ -97,7 +97,7 @@ class HomeScreenView extends StatelessWidget {
                   padding: const  EdgeInsets.only(left:8.0),
                   child: Text("Have a great day", style: 
                   TextStyle(
-                        color: viewModel.themeColor.text2,
+                        color: themeColor.text2,
                         fontFamily: "Montserrat",
                         fontSize: 15,
                   ),
@@ -106,12 +106,12 @@ class HomeScreenView extends StatelessWidget {
            const SizedBox(height: 10,),
             Divider(
             thickness: 5,
-            color: viewModel.themeColor.text1,
+            color: themeColor.text1,
            ),
            const SizedBox(height: 20,),
             Padding(
              padding: EdgeInsets.only(left: 8.0),
-             child: Text("Your Tasks", style: TextStyle(fontSize: 25, color: viewModel.themeColor.text1,  fontFamily: "Poppins"),),
+             child: Text("Your Tasks", style: TextStyle(fontSize: 25, color: themeColor.text1,  fontFamily: "Poppins"),),
            ),
            const SizedBox(height: 10,),
           Expanded(
@@ -131,7 +131,7 @@ class HomeScreenView extends StatelessWidget {
                     return  Center(
                       child: Text(
                         "No tasks available. Add some!",
-                        style: TextStyle(color: viewModel.themeColor.text1),
+                        style: TextStyle(color: themeColor.text1),
                       ),
                     );
                   }
@@ -143,8 +143,8 @@ class HomeScreenView extends StatelessWidget {
             
                       return Card(
                         color: index % 2 == 0
-                      ? viewModel.themeColor.tileColor1 // Soft dark gray
-                      : viewModel.themeColor.tileColor2,
+                      ? themeColor.tileColor1 // Soft dark gray
+                      : themeColor.tileColor2,
                         child: Slidable(
                            endActionPane: ActionPane(motion: const ScrollMotion(), 
                     children: [
@@ -156,8 +156,8 @@ class HomeScreenView extends StatelessWidget {
                       viewModel.currentTask = task;
                       viewModel.customAlertDialog(context);
                     },
-                    backgroundColor: viewModel.themeColor.iconColor, // Cyan for Edit
-                    foregroundColor: Colors.white, // Dark base for the icon
+                    backgroundColor: themeColor.iconColor, // Cyan for Edit
+                    foregroundColor: Colors.black, // Dark base for the icon
                     icon: FontAwesomeIcons.penToSquare,
                     label: 'Edit',
                     ),
@@ -165,38 +165,38 @@ class HomeScreenView extends StatelessWidget {
                      SlidableAction(onPressed: (context) async {
                       await viewModel.removeTask(task);
                      },
-                    backgroundColor: viewModel.themeColor.statustext, // Crimson for Delete
-                    foregroundColor: Colors.white, // White for the icon and text
+                    backgroundColor: themeColor.statustext, // Crimson for Delete
+                    foregroundColor: themeColor.startText3, // White for the icon and text
                     icon: FontAwesomeIcons.trashCan,
                     label: 'Delete',
                     ),
                     ]),
                           child: ListTile(
                             key: ValueKey(task["id"] ?? task["title"]),
-                            leading: Text("${index +1}", style:  TextStyle(color: viewModel.themeColor.iconColor, fontSize: 15),),
+                            leading: Text("${index +1}", style:  TextStyle(color: themeColor.iconColor, fontSize: 15),),
                             title: Text(
                               "${task["title"]}",
-                              style:  TextStyle(color: viewModel.themeColor.text1),
+                              style:  TextStyle(color: themeColor.text1),
                             ),
                             subtitle: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   "${task["description"]}",
-                                  style:  TextStyle(color: viewModel.themeColor.text3),
+                                  style:  TextStyle(color: themeColor.text3),
                                 ),
                                 
                                 Row(
                                   children: [
                                     Text(
                                       "Status: ",
-                                      style:  TextStyle(color: viewModel.themeColor.statustext,
+                                      style:  TextStyle(color: themeColor.statustext,
                                       fontSize: 12
                                       ),
                                     ),
                                     Text(
                                       "${task["isChecked"]}",
-                                      style:  TextStyle(color: viewModel.themeColor.text3 , fontSize: 12)
+                                      style:  TextStyle(color: themeColor.text3 , fontSize: 12)
                                       ,
                                     ),
                                   ],
@@ -210,11 +210,11 @@ class HomeScreenView extends StatelessWidget {
                             icon: task["isChecked"] == "Completed"
                               ?  FaIcon(
                                   FontAwesomeIcons.circleCheck,
-                                  color: viewModel.themeColor.text2,
+                                  color: themeColor.text2,
                                 )
                               :  FaIcon(
                                   FontAwesomeIcons.circle,
-                                  color: viewModel.themeColor.text2,
+                                  color: themeColor.text2,
                                 ),
                           )
            
@@ -227,14 +227,14 @@ class HomeScreenView extends StatelessWidget {
             
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return  Center(
-                    child: CircularProgressIndicator(color: viewModel.themeColor.text1),
+                    child: CircularProgressIndicator(color: themeColor.text1),
                   );
                 }
             
                 return  Center(
                   child: Text(
                     "Error loading tasks. Please try again.",
-                    style: TextStyle(color: viewModel.themeColor.text1),
+                    style: TextStyle(color: themeColor.text1),
                   ),
                 );
               },
@@ -262,10 +262,10 @@ class HomeScreenView extends StatelessWidget {
             ),
             
                     ],
-                    backgroundColor: viewModel.themeColor.gradient1,
+                    backgroundColor: themeColor.gradient1,
                     currentIndex: viewModel.selectedIndex,
-                    selectedItemColor: viewModel.themeColor.text2,
-                    unselectedItemColor: viewModel.themeColor.text3,
+                    selectedItemColor: themeColor.text2,
+                    unselectedItemColor: themeColor.text3,
                     onTap: viewModel.onItemTapped,
                   ),
           ),

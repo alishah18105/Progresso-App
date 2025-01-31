@@ -14,6 +14,11 @@ abstract class ThemeBase {
 
   Color get iconColor;
   Color get iconButtonColor;
+
+  Color get startText3;
+  Color get elevatedButtonColor;
+  Color get fieldiconColor;
+  
 }
 
 class LightTheme implements ThemeBase {
@@ -32,16 +37,25 @@ class LightTheme implements ThemeBase {
   Color tileColor2 = const Color(0xFFDC9B9B);
 
   @override
-  Color gradient1 = Color(0xFFFFEDD5);
+  Color gradient1 = Color(0xFFFFFFFF);
   @override
-  Color gradient2 = Color(0xFFFAD4D4);
+  Color gradient2 =  Color(0xFFFFF1F3); //Color(0xFFFFC0CB);
   @override
-  Color gradient3 = Color(0xFFFFFFFF);
+  Color gradient3 = Color(0xFFFFD6E8); //Color(0xFFFFE4E1);
 
   @override
   Color iconColor = Color(0xFFE91E63);
   @override
   Color iconButtonColor = Colors.white;
+
+//Login, SignUp & Splash Screen
+  @override
+  Color startText3 = Colors.white;
+  @override
+  Color fieldiconColor = Colors.black;
+  @override
+  Color elevatedButtonColor = Color(0xFFE91E63);
+
 }
 
 class DarkTheme implements ThemeBase {
@@ -52,7 +66,7 @@ class DarkTheme implements ThemeBase {
   @override
   Color text3 = Colors.white60;
   @override
-  Color statustext = const Color(0xFFB22222);
+  Color statustext = const Color(0xFFFFA500);
 
   @override
   Color tileColor1 = const Color(0xFF2F353D);
@@ -70,7 +84,18 @@ class DarkTheme implements ThemeBase {
   Color iconColor = const Color(0xFF40E0D0);
   @override
   Color iconButtonColor = Colors.black;
+
+//Login, SignUp & Splash Screen
+  @override
+  Color startText3 = Colors.black;
+   @override
+  Color fieldiconColor = Colors.white;
+  @override
+  Color elevatedButtonColor = Color(0xFFFFA500);
+
 }
+
+
 
 
 //static Color gradient1 =   Color(0xFFFFEDD5);//Color(0xFFFFEDD5);

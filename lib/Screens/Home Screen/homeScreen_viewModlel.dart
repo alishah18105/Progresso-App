@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:todoist/Utilis/app_colors.dart';
 
+bool darkTheme = false;
+ThemeBase themeColor = LightTheme();
+
 class HomeScreenViewModel extends BaseViewModel {
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();
@@ -234,8 +237,6 @@ await FirebaseAuth.instance.signOut();
 }
 
 //Theme Changer
-bool darkTheme = true;
-ThemeBase themeColor = DarkTheme();
 
 void themeChanger() {
   darkTheme = !darkTheme;

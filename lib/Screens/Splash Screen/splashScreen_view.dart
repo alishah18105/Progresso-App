@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:stacked/stacked.dart';
+import 'package:todoist/Screens/Home%20Screen/homeScreen_viewModlel.dart';
 import 'package:todoist/Screens/Splash%20Screen/splashScreen_viewModel.dart';
 
 class SplashScreenView extends StatelessWidget {
@@ -14,12 +15,12 @@ class SplashScreenView extends StatelessWidget {
       builder: (context, viewModel, child) {
         return Scaffold(
           body: Container(
-            decoration: const BoxDecoration(
+            decoration:  BoxDecoration(
               gradient: RadialGradient(
                 colors: [
-                  Color(0xFF1C1F26), // Dark gray
-                Color(0xFF1A202E), // Dark blue-gray
-                Color(0xFF232A3A), // Slightly purple-toned dark
+                  themeColor.gradient1, // Dark gray
+                  themeColor.gradient2, // Dark blue-gray
+                  themeColor.gradient3, // Slightly purple-toned dark
              
                 ],
                 center: Alignment(0.8, -0.6),
@@ -46,7 +47,7 @@ class SplashScreenView extends StatelessWidget {
                   
                   Positioned(
                     top: MediaQuery.of(context).size.height * 0.63, 
-                    child: const Row(
+                    child:  const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                        
