@@ -19,6 +19,8 @@ abstract class ThemeBase {
   Color get elevatedButtonColor;
   Color get fieldiconColor;
   
+  Color get dialogIconColor;
+  Color get dialogFieldText;
 }
 
 class LightTheme implements ThemeBase {
@@ -50,11 +52,16 @@ class LightTheme implements ThemeBase {
 
 //Login, SignUp & Splash Screen
   @override
-  Color startText3 = Colors.white;
+  Color startText3 = Colors.black;
   @override
   Color fieldiconColor = Colors.black;
   @override
   Color elevatedButtonColor = Color(0xFFE91E63);
+
+  @override
+  Color dialogFieldText = Color(0xFF2C3E56);
+  @override
+  Color dialogIconColor =  Color(0xFF1A2C6D);
 
 }
 
@@ -87,11 +94,18 @@ class DarkTheme implements ThemeBase {
 
 //Login, SignUp & Splash Screen
   @override
-  Color startText3 = Colors.black;
+  Color startText3 = Colors.white;
    @override
   Color fieldiconColor = Colors.white;
   @override
   Color elevatedButtonColor = Color(0xFFFFA500);
+
+  
+  @override
+  Color dialogFieldText = Colors.white60;
+  @override
+  Color dialogIconColor =  const Color(0xFF4A90E2);
+
 
 }
 

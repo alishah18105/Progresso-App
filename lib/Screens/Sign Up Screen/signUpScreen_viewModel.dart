@@ -9,6 +9,7 @@ class SignUpScreenViewModel extends BaseViewModel {
   bool isChecked = false;
   bool obscureText = true;
   bool obscureText2 = true;
+  
 
   TextEditingController mail = TextEditingController();
   TextEditingController name = TextEditingController();

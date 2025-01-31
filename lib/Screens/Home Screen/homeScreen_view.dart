@@ -83,7 +83,7 @@ class HomeScreenView extends StatelessWidget {
                    Padding(
                   padding:  const EdgeInsets.only(top:16.0, left: 8),
                   child: Text(
-                    "Welcome, Ali Sultan", // Display the username
+                    "Welcome, ${viewModel.userName}", // Display the username
                     style:  TextStyle(
                       color: themeColor.text1,
                       fontSize: 30,
@@ -166,7 +166,7 @@ class HomeScreenView extends StatelessWidget {
                       await viewModel.removeTask(task);
                      },
                     backgroundColor: themeColor.statustext, // Crimson for Delete
-                    foregroundColor: themeColor.startText3, // White for the icon and text
+                    foregroundColor: themeColor.iconButtonColor, // White for the icon and text
                     icon: FontAwesomeIcons.trashCan,
                     label: 'Delete',
                     ),
