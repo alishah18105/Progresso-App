@@ -105,6 +105,8 @@ class Todo extends StatelessWidget {
                       viewModel.isAdd = false;
                       viewModel.title.text = task["title"];
                       viewModel.description.text = task["description"];
+                       viewModel.date.text = task["date"];
+                       viewModel.time.text = task ["time"];
                       viewModel.currentTask = task;
                       viewModel.customAlertDialog(context);
                     },
@@ -123,53 +125,66 @@ class Todo extends StatelessWidget {
                     label: 'Delete',
                     ),
                     ]),
-                          child: ListTile(
-                            key: ValueKey(task["id"] ?? task["title"]),
-                            leading: Text("${index +1}", style:  TextStyle(color: themeColor.iconColor, fontSize: 15),),
-                            title: Text(
-                              "${task["title"]}",
-                              style:  TextStyle(color: themeColor.text1),
-                            ),
-                            subtitle: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "${task["description"]}",
-                                  style:  TextStyle(color: themeColor.text3),
-                                ),
-                                
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Status: ",
-                                      style:  TextStyle(color: themeColor.statustext,
-                                      fontSize: 12
+                          child: GestureDetector(
+                            onTap: (){
+                              viewModel.isAdd = false;
+                              viewModel.title.text = task["title"];
+                              viewModel.description.text = task["description"];
+                              viewModel.date.text = task["date"];
+                              viewModel.time.text = task ["time"];
+                              viewModel.currentTask = task;
+                              viewModel.customAlertDialog(context);
+                                    },
+                            child: ListTile(
+                              key: ValueKey(task["id"] ?? task["title"]),
+                              leading: Text("${index +1}", style:  TextStyle(color: themeColor.iconColor, fontSize: 15),),
+                              title: Text(
+                                "${task["title"]}",
+                                style:  TextStyle(color: themeColor.text1),
+                              ),
+                              subtitle: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    task["description"].length > 16
+                                    ? "${task["description"].substring(0, 16)}..."
+                                    : task["description"],
+                                    style:  TextStyle(color: themeColor.text3, fontSize: 12),
+                                  ),
+                                  
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Status: ",
+                                        style:  TextStyle(color: themeColor.statustext,
+                                        fontSize: 10
+                                        ),
                                       ),
-                                    ),
-                                    Text(
-                                      "${task["isChecked"]}",
-                                      style:  TextStyle(color: themeColor.text3 , fontSize: 12)
-                                      ,
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                      Text(
+                                        "${task["isChecked"]}",
+                                        style:  TextStyle(color: themeColor.text3 , fontSize: 10)
+                                        ,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              trailing: IconButton(
+                              onPressed: () async {
+                                await viewModel.toggleTaskCheckbox(task, context);
+                              },
+                              icon: task["isChecked"] == "Completed"
+                                ?  FaIcon(
+                                    FontAwesomeIcons.circleCheck,
+                                    color: themeColor.text2,
+                                  )
+                                :  FaIcon(
+                                    FontAwesomeIcons.circle,
+                                    color: themeColor.text2,
+                                  ),
+                            )
+                                       
                             ),
-                            trailing: IconButton(
-                            onPressed: () async {
-                              await viewModel.toggleTaskCheckbox(task, context);
-                            },
-                            icon: task["isChecked"] == "Completed"
-                              ?  FaIcon(
-                                  FontAwesomeIcons.circleCheck,
-                                  color: themeColor.text2,
-                                )
-                              :  FaIcon(
-                                  FontAwesomeIcons.circle,
-                                  color: themeColor.text2,
-                                ),
-                          )
-           
                           ),
                         ),
                       );
@@ -271,21 +286,21 @@ class Notepad extends StatelessWidget {
                   var userData = snapshot.data!.data() as Map<String, dynamic>?;
             
                   // Handle null or missing 'tasks' field
-                  List<dynamic> tasks = userData?["tasks"] ?? [];
+                  List<dynamic> notes = userData?["notes"] ?? [];
             
-                  if (tasks.isEmpty) {
+                  if (notes.isEmpty) {
                     return  Center(
                       child: Text(
-                        "No tasks available. Add some!",
+                        "No Notes available. Add some!",
                         style: TextStyle(color: themeColor.text1),
                       ),
                     );
                   }
             
                   return ListView.builder(
-                    itemCount: tasks.length,
+                    itemCount: notes.length,
                     itemBuilder: (context, index) {
-                      Map<String, dynamic> task = tasks[index] as Map<String, dynamic>;
+                      Map<String, dynamic> note = notes[index] as Map<String, dynamic>;
             
                       return Card(
                         color: index % 2 == 0
@@ -297,10 +312,11 @@ class Notepad extends StatelessWidget {
                    
                     SlidableAction(onPressed: (context){
                       viewModel.isAdd = false;
-                      viewModel.title.text = task["title"];
-                      viewModel.description.text = task["description"];
-                      viewModel.currentTask = task;
-                      viewModel.customAlertDialog(context);
+                       viewModel.titleNotepad.text = note["title"];
+                      viewModel.detail.text = note["description"];
+                      viewModel.dateNotepad.text = note["date"];
+                      viewModel.curentNote = note;
+                      viewModel.customAlerNoteDialog(context);
                     },
                     backgroundColor: themeColor.iconColor, // Cyan for Edit
                     foregroundColor: Colors.black, // Dark base for the icon
@@ -309,7 +325,7 @@ class Notepad extends StatelessWidget {
                     ),
           
                      SlidableAction(onPressed: (context) async {
-                      await viewModel.removeTask(task);
+                      await viewModel.removeNote(note);
                      },
                     backgroundColor: themeColor.statustext, // Crimson for Delete
                     foregroundColor: themeColor.iconButtonColor, // White for the icon and text
@@ -317,53 +333,48 @@ class Notepad extends StatelessWidget {
                     label: 'Delete',
                     ),
                     ]),
-                          child: ListTile(
-                            key: ValueKey(task["id"] ?? task["title"]),
-                            leading: Text("${index +1}", style:  TextStyle(color: themeColor.iconColor, fontSize: 15),),
-                            title: Text(
-                              "${task["title"]}",
-                              style:  TextStyle(color: themeColor.text1),
-                            ),
-                            subtitle: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "${task["description"]}",
-                                  style:  TextStyle(color: themeColor.text3),
-                                ),
-                                
-                                Row(
-                                  children: [
-                                    Text(
-                                      "Status: ",
-                                      style:  TextStyle(color: themeColor.statustext,
-                                      fontSize: 12
-                                      ),
-                                    ),
-                                    Text(
-                                      "${task["isChecked"]}",
-                                      style:  TextStyle(color: themeColor.text3 , fontSize: 12)
-                                      ,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            trailing: IconButton(
-                            onPressed: () async {
-                              await viewModel.toggleTaskCheckbox(task, context);
+                          child: GestureDetector(
+                            onTap: (){
+                              viewModel.isAdd = false;
+                               viewModel.titleNotepad.text = note["title"];
+                               viewModel.detail.text = note["description"];
+                                 viewModel.dateNotepad.text = note["date"];
+                                viewModel.curentNote = note;
+                                viewModel.customAlerNoteDialog(context);
                             },
-                            icon: task["isChecked"] == "Completed"
-                              ?  FaIcon(
-                                  FontAwesomeIcons.circleCheck,
-                                  color: themeColor.text2,
-                                )
-                              :  FaIcon(
-                                  FontAwesomeIcons.circle,
-                                  color: themeColor.text2,
-                                ),
-                          )
-           
+                            child: ListTile(
+                              key: ValueKey(note["id"] ?? note["title"]),
+                              leading: Text("${index +1}", style:  TextStyle(color: themeColor.iconColor, fontSize: 15),),
+                              title: Text(
+                                "${note["title"]}",
+                                style:  TextStyle(color: themeColor.text1),
+                              ),
+                              subtitle: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                 Text(
+                                note["description"].length > 25
+                                    ? "${note["description"].substring(0, 20)}..."
+                                    : note["description"],
+                                style: TextStyle(color: themeColor.text3, fontSize: 12),
+                              ),
+                                  
+                                  Row(
+                                    children: [
+                                        FaIcon(FontAwesomeIcons.calendar,color: themeColor.statustext, size: 14),
+                                        SizedBox(width: 5,),
+                                      Text(
+                                        "${note["date"]}",
+                                        style:  TextStyle(color: themeColor.text3 , fontSize: 12)
+                                        ,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                             
+                                       
+                            ),
                           ),
                         ),
                       );

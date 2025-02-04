@@ -37,7 +37,9 @@ class SignUpScreenViewModel extends BaseViewModel {
         await firestore.collection('users').doc(currentUserId).set({
           'name': name.text.trim(),
           'email': mail.text.trim(),
+          'darkTheme' : "true",
           'tasks': [],
+          'notes' : [],
         });
         print("User Sign-Up & Data Stored Successfully");
       }

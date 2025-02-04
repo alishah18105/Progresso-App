@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
-import 'package:todoist/Custom%20Widgets/widgets.dart';
+import 'package:todoist/Custom%20Widgets/Custom_Screen_Widgets.dart';
 import 'package:todoist/Screens/Home%20Screen/homeScreen_viewModlel.dart';
 import 'package:todoist/Screens/Login%20Screen/loginScreen_view.dart';
 
@@ -12,7 +12,7 @@ class HomeScreenView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ViewModelBuilder.reactive(
      onViewModelReady: (viewModel) {
-        viewModel.loadUserData(); // Load user data
+        viewModel.loadUserData(); 
       },
       viewModelBuilder: () => HomeScreenViewModel(),
       builder: (context, viewModel, child) {
@@ -20,7 +20,10 @@ class HomeScreenView extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
             onPressed: () {
               viewModel.isAdd = true;
-              viewModel.customAlertDialog(context);
+              if(viewModel.selectedIndex == 0){
+                viewModel.customAlertDialog(context);
+              }
+              else viewModel.customAlerNoteDialog(context);
             },
             shape: const CircleBorder(),
             backgroundColor:themeColor.iconColor,

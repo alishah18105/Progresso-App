@@ -5,22 +5,33 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:stacked/stacked.dart';
 import 'package:todoist/Utilis/app_colors.dart';
 
-bool darkTheme = false;
-ThemeBase themeColor = LightTheme();
+bool darkTheme = true;
+ThemeBase themeColor = DarkTheme();
 
 class HomeScreenViewModel extends BaseViewModel {
+  //Todo Screen
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController date = TextEditingController();
-    TextEditingController time = TextEditingController();
+  TextEditingController time = TextEditingController();
+
+//Notepad Screen
+  TextEditingController titleNotepad = TextEditingController();
+  TextEditingController detail = TextEditingController();
+  TextEditingController dateNotepad = TextEditingController();
+  
+
 
   String? userName; 
-  Map<String, dynamic>? currentTask; // Used for editing existing tasks
-  List<Map<String, dynamic>> tasks = []; // List to store tasks
+  Map<String, dynamic>? currentTask; 
+  List<Map<String, dynamic>> tasks = []; 
+
+  Map<String, dynamic> ? curentNote;
+  List <Map<String,dynamic>> notes = []; 
 
   bool isAdd = true;
 
-  // Retrieve the user document dynamically
+  
   Future<DocumentReference> get userDoc async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -38,11 +49,13 @@ class HomeScreenViewModel extends BaseViewModel {
       if (snapshot.exists) {
         final data = snapshot.data() as Map<String, dynamic>;
         tasks = List<Map<String, dynamic>>.from(data['tasks'] ?? []);
+        notes = List<Map<String, dynamic>>.from(data["notes"] ?? []);
         userName = data['name']?? "User" as String?;
         print("Fetched tasks: $tasks");
       } else {
         print("No user data found in Firestore.");
         tasks = [];
+        notes = [];
       }
       notifyListeners(); // Update UI
     } catch (error) {
@@ -58,6 +71,8 @@ class HomeScreenViewModel extends BaseViewModel {
       Map<String, String> newTask = {
         "title": title.text.trim(),
         "description": description.text.trim(),
+        "date" : date.text.trim(),
+        "time" : time.text.trim(),
         "isChecked" : "Pending"
       };
 
@@ -69,10 +84,38 @@ class HomeScreenViewModel extends BaseViewModel {
       tasks.add(newTask);
       title.clear();
       description.clear();
+      date.clear();
+      time.clear();
       print("Task added successfully!");
       notifyListeners(); // Update UI
     } catch (error) {
       print("Error adding task: $error");
+    }
+  }
+
+  Future<void> addNotes() async {
+    try {
+      final userDocument = await userDoc;
+
+      Map<String, String> newNote = {
+        "title": titleNotepad.text.trim(),
+        "description": detail.text.trim(),
+        "date" : dateNotepad.text.trim(),
+      };
+
+      await userDocument.update({
+        "notes": FieldValue.arrayUnion([newNote])
+      });
+
+      // Update local tasks list
+      notes.add(newNote);
+      titleNotepad.clear();
+      detail.clear();
+      dateNotepad.clear();
+      print("Note added successfully!");
+      notifyListeners(); 
+    } catch (error) {
+      print("Error adding Notes: $error");
     }
   }
 
@@ -95,6 +138,8 @@ class HomeScreenViewModel extends BaseViewModel {
       Map<String, String> updatedTask = {
         "title": title.text.trim(),
         "description": description.text.trim(),
+        "date" : date.text.trim(),
+        "time" : time.text.trim(),
         "isChecked" : "Pending",
       };
 
@@ -108,8 +153,50 @@ class HomeScreenViewModel extends BaseViewModel {
 
       title.clear();
       description.clear();
+      date.clear();
+      time.clear();
       currentTask = null; // Clear the current task after updating
       print("Task updated successfully!");
+      notifyListeners(); // Update UI
+    } catch (error) {
+      print("Error updating task: $error");
+    }
+  }
+
+Future<void> updateNote() async {
+    if (curentNote == null) {
+      print("Current Note is null. Please ensure you're editing a note.");
+      return;
+    }
+
+    try {
+      final userDocument = await userDoc;
+
+      // Remove the old task first
+      await userDocument.update({
+        "notes": FieldValue.arrayRemove([curentNote])
+      });
+
+      // Add the updated task
+      Map<String, String> updatedNote = {
+        "title": titleNotepad.text.trim(),
+        "description": detail.text.trim(),
+        "date" : dateNotepad.text.trim(),
+      };
+
+      await userDocument.update({
+        "notes": FieldValue.arrayUnion([updatedNote])
+      });
+
+      // Update local tasks list
+      notes.remove(curentNote);
+      notes.add(updatedNote);
+
+      titleNotepad.clear();
+      detail.clear();
+      date.clear();
+      curentNote = null; // Clear the current task after updating
+      print("Note updated successfully!");
       notifyListeners(); // Update UI
     } catch (error) {
       print("Error updating task: $error");
@@ -128,6 +215,23 @@ class HomeScreenViewModel extends BaseViewModel {
       // Update local tasks list
       tasks.remove(task);
       print("Task removed successfully!");
+      notifyListeners(); // Update UI
+    } catch (error) {
+      print("Error removing task: $error");
+    }
+  }
+
+   Future<void> removeNote(Map<String, dynamic> note) async {
+    try {
+      final userDocument = await userDoc;
+
+      await userDocument.update({
+        "notes": FieldValue.arrayRemove([note])
+      });
+
+      // Update local tasks list
+      notes.remove(note);
+      print("Note removed successfully!");
       notifyListeners(); // Update UI
     } catch (error) {
       print("Error removing task: $error");
@@ -153,9 +257,8 @@ class HomeScreenViewModel extends BaseViewModel {
   void customAlertDialog(BuildContext context) {
   DateTime selectedDate = DateTime.now(); // Default to the current date
   TimeOfDay? selectedEndTime;
+  
 
-  // Function to pick a date
-  // Function to pick a date
 Future<void> pickDate(BuildContext context) async {
   final DateTime? picked = await showDatePicker(
     context: context,
@@ -186,10 +289,23 @@ Future<void> pickEndTime(BuildContext context) async {
 
 showDialog(
   context: context,
+  barrierDismissible: false,
   builder: (BuildContext context) {
     return AlertDialog(
       backgroundColor: themeColor.tileColor1,
-      title: Text(isAdd ? "Add Task" : "Update Task", style: TextStyle(color: themeColor.text1),),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(isAdd ? "Add Task" : "Update Task", style: TextStyle(color: themeColor.text1, ),),
+          IconButton(onPressed: (){
+            title.clear();
+            description.clear();
+            date.clear();
+            time.clear();
+            Navigator.pop(context);
+          }, icon: Icon(Icons.cancel,color:  themeColor.elevatedButtonColor, size: 30))
+        ],
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -211,7 +327,7 @@ showDialog(
                 child: TextField(
                   style: TextStyle(color: themeColor.startText3),
                   readOnly: true,
-                  controller: date, // Use existing TextEditingController
+                  controller: date, 
                   decoration:  InputDecoration(
                     labelText: "Submission Date",
                     labelStyle: TextStyle(color: themeColor.dialogFieldText)
@@ -255,12 +371,16 @@ showDialog(
         ElevatedButton(
           onPressed: () async {
             if (isAdd) {
-              // Call addTask with additional details
+              
               await addTask();
             } else {
-              // Call updateTask with additional details
+              
               await updateTask();
             }
+            title.clear();
+            description.clear();
+            date.clear();
+            time.clear();
             Navigator.pop(context);
           },
           child: Text(isAdd ? "Add" : "Update", style: TextStyle(color:themeColor.iconButtonColor),),
@@ -274,6 +394,141 @@ showDialog(
 );
 
 }
+
+void customAlerNoteDialog(BuildContext context) {
+  DateTime selectedDate = DateTime.now();
+   
+
+  Future<void> pickDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null && picked != selectedDate) {
+      selectedDate = picked;
+      dateNotepad.text =
+          "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+    }
+  }
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: themeColor.tileColor1,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              isAdd ? "Add Note" : "Update Note",
+              style: TextStyle(color: themeColor.text1, fontWeight: FontWeight.bold),
+            ),
+             IconButton(onPressed: (){
+              titleNotepad.clear();
+                detail.clear();
+                dateNotepad.clear();
+            Navigator.pop(context);
+          }, icon: Icon(Icons.cancel,color:  themeColor.elevatedButtonColor, size: 30))
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Title TextField
+              TextField(
+                style: TextStyle(color: themeColor.startText3),
+                controller: titleNotepad,
+                decoration: InputDecoration(
+                  labelText: "Title",
+                  labelStyle: TextStyle(color: themeColor.dialogFieldText),
+                ),
+              ),
+          
+              const SizedBox(height: 10), // Added spacing
+          
+              // Details TextField
+              TextField(
+                style: TextStyle(color: themeColor.startText3),
+                controller: detail,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: "Note something down",
+                  hintStyle: TextStyle(color: themeColor.dialogFieldText),
+                  alignLabelWithHint: true, // Ensures hint stays on top-left
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: themeColor.elevatedButtonColor)
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: themeColor.elevatedButtonColor)
+                  ),
+                ),
+              ),
+          
+              const SizedBox(height: 10),
+          
+              // Date Picker Row
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      style: TextStyle(color: themeColor.startText3),
+                      readOnly: true,
+                      controller: dateNotepad,
+                      decoration: InputDecoration(
+                        labelText: "Added On",
+                        labelStyle: TextStyle(color: themeColor.dialogFieldText),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      await pickDate(context);
+                    },
+                    icon: FaIcon(
+                      FontAwesomeIcons.calendar,
+                      color: themeColor.dialogIconColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () async {
+              if (isAdd) {
+                await addNotes();
+                
+              } else {
+                await updateNote();
+              }
+              titleNotepad.clear();
+                detail.clear();
+                dateNotepad.clear();
+              Navigator.pop(context);
+            },
+            child: Text(
+              isAdd ? "Add" : "Update",
+              style: TextStyle(color: themeColor.iconButtonColor),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: themeColor.elevatedButtonColor,
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
 
 
   //Bottom Navigation Bar:
